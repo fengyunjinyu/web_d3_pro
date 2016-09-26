@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+
+<p>Hello World 1</p>
+<p>Hello World 2</p>
+<p>Hello World 1</p>
+<p>Hello World 2</p>
+<script src="../lib/d3.min.js" charset="utf-8"></script>
+<script>
+    var str = "China";
+    var body = d3.select('body');
+    var p = body.selectAll("p");
+
+    /*
+    p.datum(str);
+
+    p.text(function(d , i){
+        return " no. "+i+" __  "+d;
+
+    })
+
+    */
+
+    var dataset = ["I like dog","I like cat","I like snake"];
+    p.data(dataset).text(function(d , i){
+        return " no. "+i+" __  "+d;
+
+    })
+
+    var p1 = body.select("p");
+    p1.style("color" , "#84ff00");
+
+    body.append("p").text("append p element");
+</script>
+
+</body>
+</html>
