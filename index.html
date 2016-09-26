@@ -80,9 +80,26 @@
             position: relative;
             float: left;
             width: 100%;
+            padding-left: 30px;;
 
         }
 
+
+        .node circle {
+            fill: #fff;
+            stroke: steelblue;
+            stroke-width: 1.5px;
+        }
+
+        .node {
+            font: 12px sans-serif;
+        }
+
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 1.5px;
+        }
 
     </style>
 </head>
@@ -95,7 +112,7 @@
         <li>矩形图</li>
         <li>饼状图</li>
         <li>力导向图</li>
-        <li>树状图</li>
+        <li onclick="build_tree_3d()">树状图</li>
     </ul>
 
 </slide>
@@ -103,9 +120,9 @@
 <content class="content">
 
     <div class="cont_hd">
-        D3.js 矩形图
+        D3.js创建树状图
     </div>
-    <div class="cont_main">
+    <div class="cont_main" id="cont_main">
 
     </div>
 
@@ -113,11 +130,79 @@
 </content>
 
 <footer class="footer">
-
     Fengyun
-
-
 </footer>
+
+<script src="lib/d3.min.js"></script>
+<script type="text/javascript">
+    var width = 500;
+    var height = 500;
+    /**
+     * 创建svg对象
+     */
+    var svg = d3.select("#cont_main")
+            .append("svg")
+            .attr("width",500)
+            .attr("height",500)
+            .append("g")
+            .attr("transform" , "translate(40 ,0)")
+            .style("background","#fff");
+    /**
+     * 创建集群布局
+     */
+    var tree = d3.layout.tree().size([width , height-200])
+            .separation(function(a , b){
+                return (a.parent == b.parent ? 1 : 2);
+            });
+
+    d3.json("data/city.json" , function(error , root){
+        var nodes = tree.nodes(root);
+        var links = tree.links(nodes);
+
+        console.log(nodes);
+        console.log(links);
+
+        /**
+         * 创建对角线生成器
+         */
+        var diagonal = d3.svg.diagonal().projection(function(d){
+            return [d.y , d.x]
+        });
+
+        var link = svg.selectAll(".link")
+                .data(links)
+                .enter()
+                .append("path")
+                .attr("class" , "link")
+                .attr("d" , diagonal);
+
+        var node = svg.selectAll(".node")
+                .data(nodes)
+                .enter()
+                .append("g")
+                .attr("class" , "node")
+                .attr("transform" , function(d){
+                    return "translate("+ d.y+","+ d.x+")"
+                });
+        node.append("circle").attr("r" , 4.5);
+
+        node.append("text")
+                .attr("dx" , function(d){  return d.children ? -8 :8 })
+                .attr("dy" , 3)
+                .style("text-anchor" , function(d){
+                    return d.children ? "end" : "start";
+                }).text(function(d){
+                    return d.name;
+                })
+    })
+
+
+
+
+
+
+
+</script>
 
 </body>
 </html>
